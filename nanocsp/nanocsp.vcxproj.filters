@@ -28,6 +28,9 @@
     <Filter Include="ソース ファイル\core">
       <UniqueIdentifier>{80a3ce1b-9958-4e05-aafe-108eabe25cf7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\example">
+      <UniqueIdentifier>{110cb962-2b0e-42d7-87be-2bbd63f9616b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\core\NanoCSP.h">
@@ -109,6 +112,12 @@
     </ClCompile>
     <ClCompile Include="..\src\minisat\minisat_wrap.cpp">
       <Filter>ソース ファイル\minisat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\examples\sudoku.cpp">
+      <Filter>ソース ファイル\example</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\examples\simple_csp.cpp">
+      <Filter>ソース ファイル\example</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

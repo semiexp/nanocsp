@@ -42,6 +42,34 @@ namespace NanoCSP
 
 	void NCSolver::IntEqual(NCInt& opLeft, NCInt& opRight, std::vector<int>& prem)
 	{
+		LessEqualThan(opLeft, opRight, prem);
+		GtrEqualThan(opLeft, opRight, prem);
+	}
+
+	void NCSolver::IntNotEqual(NCInt& opLeft, NCInt& opRight, std::vector<int>& prem)
+	{
+		NCBool c1(*this);
+		NCBool c2(*this);
+
+		cond.push_back(c1.vId);
+		cond.push_back(c2.vId);
+		cond.push_back(0);
+
+		prem.push_back(-c1.vId);
+		GtrThan(opLeft, opRight, prem);
+
+		prem.pop_back();
+		prem.push_back(-c2.vId);
+		LessThan(opLeft, opRight, prem);
+
+		prem.pop_back();
+	}
+
+	void NCSolver::IntAllDifferent(std::vector<NCInt>& vals, std::vector<int>& prem)
+	{
+		for(int i = 0; i < vals.size(); i++)
+			for(int j = i + 1; j < vals.size(); j++)
+				IntNotEqual(vals[i], vals[j], prem);
 	}
 
 	void NCSolver::LessEqualThan(NCInt& opLeft, NCInt& opRight, std::vector<int>& prem)
