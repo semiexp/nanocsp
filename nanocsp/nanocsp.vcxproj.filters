@@ -13,6 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="ソース ファイル\minisat">
+      <UniqueIdentifier>{226f6440-f34e-43c8-831c-4cce72292310}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\minisat\core">
+      <UniqueIdentifier>{667c7b19-432f-4e4e-a74e-e057d089c0c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\minisat\mtl">
+      <UniqueIdentifier>{6446b70a-c34a-4e46-90c8-fadb61ae8366}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\minisat\util">
+      <UniqueIdentifier>{b7f79656-66ee-4a43-b5a8-266a46991777}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -21,10 +33,70 @@
     <ClCompile Include="..\src\nanocsp.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\minisat\minisat_wrap.cpp">
+      <Filter>ソース ファイル\minisat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\minisat\core\Solver.cc">
+      <Filter>ソース ファイル\minisat\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\minisat\utils\System.cc">
+      <Filter>ソース ファイル\minisat\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\minisat\utils\Options.cc">
+      <Filter>ソース ファイル\minisat\util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\targetver.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\minisat\minisat_wrap.h">
+      <Filter>ソース ファイル\minisat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\minisat\core\Dimacs.h">
+      <Filter>ソース ファイル\minisat\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\minisat\core\Solver.h">
+      <Filter>ソース ファイル\minisat\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\minisat\core\SolverTypes.h">
+      <Filter>ソース ファイル\minisat\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\minisat\mtl\Map.h">
+      <Filter>ソース ファイル\minisat\mtl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\minisat\mtl\Queue.h">
+      <Filter>ソース ファイル\minisat\mtl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\minisat\mtl\Sort.h">
+      <Filter>ソース ファイル\minisat\mtl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\minisat\mtl\Vec.h">
+      <Filter>ソース ファイル\minisat\mtl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\minisat\mtl\XAlloc.h">
+      <Filter>ソース ファイル\minisat\mtl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\minisat\mtl\Alg.h">
+      <Filter>ソース ファイル\minisat\mtl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\minisat\mtl\Alloc.h">
+      <Filter>ソース ファイル\minisat\mtl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\minisat\mtl\Heap.h">
+      <Filter>ソース ファイル\minisat\mtl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\minisat\mtl\IntTypes.h">
+      <Filter>ソース ファイル\minisat\mtl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\minisat\utils\System.h">
+      <Filter>ソース ファイル\minisat\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\minisat\utils\Options.h">
+      <Filter>ソース ファイル\minisat\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\minisat\utils\ParseUtils.h">
+      <Filter>ソース ファイル\minisat\util</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
