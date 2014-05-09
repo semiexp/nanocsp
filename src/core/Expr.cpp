@@ -44,6 +44,13 @@ namespace NanoCSP
 		return NCExpr(NCExpr::NC_GREATEREQUAL, &left, &right);
 	};
 
+	NCExpr operator+(NCBool& left, NCExpr& right)
+	{
+		NCExpr lf(left);
+
+		return NCExpr(NCExpr::NC_ADD, &lf, &right);
+	};
+
 	void NCExpr::print(std::ostream &ofs)
 	{
 		if(opKind == NC_BOOLVAR) {

@@ -80,6 +80,7 @@
     <ClInclude Include="..\src\minisat\core\Dimacs.h" />
     <ClInclude Include="..\src\minisat\core\Solver.h" />
     <ClInclude Include="..\src\minisat\core\SolverTypes.h" />
+    <ClInclude Include="..\src\minisat\minisat_wrap.h" />
     <ClInclude Include="..\src\minisat\mtl\Alg.h" />
     <ClInclude Include="..\src\minisat\mtl\Alloc.h" />
     <ClInclude Include="..\src\minisat\mtl\Heap.h" />
@@ -95,9 +96,12 @@
     <ClInclude Include="..\src\targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\core\CSPSolver.cpp" />
     <ClCompile Include="..\src\core\Expr.cpp" />
+    <ClCompile Include="..\src\core\Variables.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\minisat\core\Solver.cc" />
+    <ClCompile Include="..\src\minisat\minisat_wrap.cpp" />
     <ClCompile Include="..\src\minisat\utils\Options.cc" />
     <ClCompile Include="..\src\minisat\utils\System.cc" />
   </ItemGroup>
