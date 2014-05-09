@@ -1,4 +1,4 @@
 nanocsp
 =======
 
-Small CSP solver for solving puzzles
+Small CSP solver for puzzle solvers
