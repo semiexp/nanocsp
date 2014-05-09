@@ -33,6 +33,9 @@ namespace NanoCSP
 		int GtrEqualThan(int x) { return -LessThan(x); }
 		bool AlwaysHoldsGtrThan(int x) { return x < nMin; }
 		int GtrThan(int x) { return -LessEqualThan(x); }
+
+		inline NCInt operator+(const int d) { return NCInt(vTop, nMin + d, nMax + d); }
+		inline NCInt operator-(const int d) { return NCInt(vTop, nMin - d, nMax - d); }
 	};
 
 	class NCSolver
@@ -51,8 +54,10 @@ namespace NanoCSP
 		NCSolver() { vTop = 1; }
 
 		void IntEqual(NCInt& opLeft, NCInt& opRight, std::vector<int>& prem);
-		void LessThan(NCInt& opLeft, NCInt& opRight, std::vector<int>& prem);
-		void GtrThan(NCInt& opLeft, NCInt& opRight, std::vector<int>& prem) { LessThan(opRight, opLeft, prem); }
+		void LessEqualThan(NCInt& opLeft, NCInt& opRight, std::vector<int>& prem = std::vector<int>());
+		void LessThan(NCInt& opLeft, NCInt& opRight, std::vector<int>& prem = std::vector<int>()){ LessEqualThan(opLeft, opRight - 1, prem); }
+		void GtrEqualThan(NCInt& opLeft, NCInt& opRight, std::vector<int>& prem = std::vector<int>()) { LessEqualThan(opRight, opLeft, prem); }
+		void GtrThan(NCInt& opLeft, NCInt& opRight, std::vector<int>& prem = std::vector<int>()){ LessThan(opRight, opLeft, prem); }
 		void AddLessEqual(NCInt& addLeft, NCInt& addRight, NCInt& opRight, std::vector<int>& prem = std::vector<int>());
 		void AddGtrEqual(NCInt& addLeft, NCInt& addRight, NCInt& opRight, std::vector<int>& prem = std::vector<int>());
 		void AddEqual(NCInt& addLeft, NCInt& addRight, NCInt& opRight, std::vector<int>& prem = std::vector<int>());

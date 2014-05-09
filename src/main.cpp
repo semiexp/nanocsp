@@ -12,10 +12,10 @@ int main(int argc, char** argv)
 	NCInt x(sol, 1, 5);
 	NCInt y(sol, 2, 6);
 	NCInt z(sol, 0, 4);
-	NCInt w(sol, 2, 5);
+	NCInt w(sol, 2, 3);
 
 	sol.AddEqual(x, y, z);
-	sol.AddEqual(z, y, w);
+	sol.GtrThan(z, w);
 
 	bool res = sol.solve();
 

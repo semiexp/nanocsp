@@ -40,9 +40,28 @@ namespace NanoCSP
 		return iv.nMax;
 	}
 
-	void NCSolver::IntEqual(NCInt& opLeft, NCInt& opRight, std::vector<int>& prem = std::vector<int>())
+	void NCSolver::IntEqual(NCInt& opLeft, NCInt& opRight, std::vector<int>& prem)
 	{
 	}
+
+	void NCSolver::LessEqualThan(NCInt& opLeft, NCInt& opRight, std::vector<int>& prem)
+	{
+		// opLeft <= opRight
+
+		for(int n = opRight.nMin; n <= opRight.nMax; n++) {
+			int condY = opRight.LessEqualThan(n);
+
+			if(opLeft.AlwaysHoldsLessEqualThan(n)) continue;
+			int condX = opLeft.LessEqualThan(n);
+
+			for(int i = 0; i < prem.size(); i++) cond.push_back(prem[i]);
+			if(condY != 0) cond.push_back(-condY);
+			if(condX != 0) cond.push_back(condX);
+
+			cond.push_back(0);
+		}
+	}
+
 
 	void NCSolver::AddLessEqual(NCInt& addLeft, NCInt& addRight, NCInt& opRight, std::vector<int>& prem)
 	{
