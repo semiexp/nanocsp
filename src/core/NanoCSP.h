@@ -1,7 +1,6 @@
 
 #include <iostream>
 
-	/*
 namespace NanoCSP
 {
 	class NCSolver
@@ -77,4 +76,4 @@ namespace NanoCSP
 		void print(std::ostream &ofs);
 	};
 };
-	*/
+

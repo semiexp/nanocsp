@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{7F03C7ED-887D-43A0-A469-3A1B71E23DEA}</ProjectGuid>
+    <ProjectGuid>{CBA1679F-501A-4187-BEF4-584F25DB2711}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>nanocsp</RootNamespace>
   </PropertyGroup>
@@ -76,20 +76,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\src\minisat\core\Solver.cc" />
-    <ClCompile Include="..\src\minisat\minisat_wrap.cpp" />
-    <ClCompile Include="..\src\minisat\utils\Options.cc" />
-    <ClCompile Include="..\src\minisat\utils\System.cc" />
-    <ClCompile Include="..\src\nanocsp.cpp" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClInclude Include="..\src\core\NanoCSP.h" />
     <ClInclude Include="..\src\minisat\core\Dimacs.h" />
     <ClInclude Include="..\src\minisat\core\Solver.h" />
     <ClInclude Include="..\src\minisat\core\SolverTypes.h" />
-    <ClInclude Include="..\src\minisat\minisat_wrap.h" />
     <ClInclude Include="..\src\minisat\mtl\Alg.h" />
     <ClInclude Include="..\src\minisat\mtl\Alloc.h" />
     <ClInclude Include="..\src\minisat\mtl\Heap.h" />
@@ -103,6 +93,13 @@
     <ClInclude Include="..\src\minisat\utils\ParseUtils.h" />
     <ClInclude Include="..\src\minisat\utils\System.h" />
     <ClInclude Include="..\src\targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\core\Expr.cpp" />
+    <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\minisat\core\Solver.cc" />
+    <ClCompile Include="..\src\minisat\utils\Options.cc" />
+    <ClCompile Include="..\src\minisat\utils\System.cc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -2,7 +2,6 @@
 #include "NanoCSP.h"
 #include <iostream>
 
-	/*
 namespace NanoCSP
 {
 	NCExpr operator+(NCExpr& left, NCExpr& right)
@@ -88,4 +87,4 @@ namespace NanoCSP
 		}
 	}
 };
-	*/
+
