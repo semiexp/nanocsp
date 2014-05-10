@@ -22,6 +22,7 @@ namespace NanoCSP
 		int vTop, nMin, nMax;
 
 		NCInt() : vTop(-1) {}
+		NCInt(int val) : vTop(-1), nMin(val), nMax(val) {}
 		NCInt(int vTop, int nMin, int nMax) : vTop(vTop), nMin(nMin), nMax(nMax) {}
 		NCInt(NCSolver& sol, int nMin, int nMax);
 

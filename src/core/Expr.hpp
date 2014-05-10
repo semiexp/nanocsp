@@ -78,6 +78,28 @@ namespace NanoCSP
 		}
 	};
 
+	// x - y
+	template <typename Ta, typename Tb, int Op1, typename Tc, typename Td, int Op2>
+	struct NCIntOpExpr <NCIntOpExpr<Ta, Tb, Op1>, NCIntOpExpr<Tc, Td, Op2>, NC_INT_SUBTRACT>
+	{
+		NCIntOpExpr<Ta, Tb, Op1> v1; NCIntOpExpr<Tc, Td, Op2> v2;
+
+		NCIntOpExpr(NCIntOpExpr<Ta, Tb, Op1> v1, NCIntOpExpr<Tc, Td, Op2> v2) : v1 (v1), v2 (v2) {}
+
+		void apply(); // This expr is not applicable
+		NCInt trans(NCSolver *sol)
+		{
+			NCInt tr1 = v1.trans(sol);
+			NCInt tr2 = v2.trans(sol);
+
+			NCInt ret(*sol, tr1.nMin - tr2.nMax, tr1.nMax - tr2.nMin);
+
+			sol->AddEqual(ret, tr2, tr1);
+
+			return ret;
+		}
+	};
+
 	// (x : IntExpr + y : IntExpr) == z : IntExpr of IntVariable
 	template <typename Ta, typename Tb, int Op1, typename Tc, typename Td, int Op2>
 	struct NCBoolOpExpr <NCIntOpExpr<NCIntOpExpr<Ta, Tb, Op1>, NCIntOpExpr<Tc, Td, Op2>, NC_INT_ADD>, NCIntOpExpr<NCInt, void, NC_INT_VARIABLE>, NC_INT_EQUAL>
@@ -94,6 +116,53 @@ namespace NanoCSP
 			NCInt tr3 = v2.trans(sol);
 
 			sol->AddEqual(tr1, tr2, tr3);
+		}
+
+		NCBool trans(NCSolver *sol)
+		{
+			NCInt tr1 = v1.trans(sol);
+			NCInt tr2 = v2.trans(sol);
+			NCBool ret(*sol);
+
+			// (ret <=> (tr1 == tr2))
+			std::vector<int> prem; prem.push_back(-ret.vId);
+			sol->IntEqual(tr1, tr2, prem);
+
+			prem[0] = -prem[0];
+			sol->IntNotEqual(tr1, tr2, prem);
+		}
+	};
+
+	// (x : IntExpr - y : IntExpr) == z : IntExpr of IntVariable
+	template <typename Ta, typename Tb, int Op1, typename Tc, typename Td, int Op2>
+	struct NCBoolOpExpr <NCIntOpExpr<NCIntOpExpr<Ta, Tb, Op1>, NCIntOpExpr<Tc, Td, Op2>, NC_INT_SUBTRACT>, NCIntOpExpr<NCInt, void, NC_INT_VARIABLE>, NC_INT_EQUAL>
+	{
+		NCIntOpExpr<NCIntOpExpr<Ta, Tb, Op1>, NCIntOpExpr<Tc, Td, Op2>, NC_INT_SUBTRACT> v1;
+		NCIntOpExpr<NCInt, void, NC_INT_VARIABLE> v2;
+
+		NCBoolOpExpr(NCIntOpExpr<NCIntOpExpr<Ta, Tb, Op1>, NCIntOpExpr<Tc, Td, Op2>, NC_INT_SUBTRACT> v1, NCIntOpExpr<NCInt, void, NC_INT_VARIABLE> v2) : v1 (v1), v2 (v2) {}
+
+		void apply(NCSolver *sol)
+		{
+			NCInt tr1 = v1.v1.trans(sol);
+			NCInt tr2 = v1.v2.trans(sol);
+			NCInt tr3 = v2.trans(sol);
+
+			sol->AddEqual(tr3, tr2, tr1);
+		}
+
+		NCBool trans(NCSolver *sol)
+		{
+			NCInt tr1 = v1.trans(sol);
+			NCInt tr2 = v2.trans(sol);
+			NCBool ret(*sol);
+
+			// (ret <=> (tr1 == tr2))
+			std::vector<int> prem; prem.push_back(-ret.vId);
+			sol->IntEqual(tr1, tr2, prem);
+
+			prem[0] = -prem[0];
+			sol->IntNotEqual(tr1, tr2, prem);
 		}
 	};
 
@@ -113,6 +182,53 @@ namespace NanoCSP
 			NCInt tr3 = v1.trans(sol);
 
 			sol->AddEqual(tr1, tr2, tr3);
+		}
+
+		NCBool trans(NCSolver *sol)
+		{
+			NCInt tr1 = v1.trans(sol);
+			NCInt tr2 = v2.trans(sol);
+			NCBool ret(*sol);
+
+			// (ret <=> (tr1 == tr2))
+			std::vector<int> prem; prem.push_back(-ret.vId);
+			sol->IntEqual(tr1, tr2, prem);
+
+			prem[0] = -prem[0];
+			sol->IntNotEqual(tr1, tr2, prem);
+		}
+	};
+
+	// z : IntExpr == (x : IntExpr - y : IntExpr)
+	template <typename Ta, typename Tb, int Op1, typename Tc, typename Td, int Op2, typename Te, typename Tf, int Op3>
+	struct NCBoolOpExpr <NCIntOpExpr<Te, Tf, Op3>, NCIntOpExpr<NCIntOpExpr<Ta, Tb, Op1>, NCIntOpExpr<Tc, Td, Op2>, NC_INT_SUBTRACT>, NC_INT_EQUAL>
+	{
+		NCIntOpExpr<Te, Tf, Op3> v1;
+		NCIntOpExpr<NCIntOpExpr<Ta, Tb, Op1>, NCIntOpExpr<Tc, Td, Op2>, NC_INT_SUBTRACT> v2;
+
+		NCBoolOpExpr(NCIntOpExpr<Te, Tf, Op3> v1, NCIntOpExpr<NCIntOpExpr<Ta, Tb, Op1>, NCIntOpExpr<Tc, Td, Op2>, NC_INT_SUBTRACT> v2) : v1 (v1), v2 (v2) {}
+
+		void apply(NCSolver *sol)
+		{
+			NCInt tr1 = v2.v1.trans(sol);
+			NCInt tr2 = v2.v2.trans(sol);
+			NCInt tr3 = v1.trans(sol);
+
+			sol->AddEqual(tr3, tr2, tr1);
+		}
+
+		NCBool trans(NCSolver *sol)
+		{
+			NCInt tr1 = v1.trans(sol);
+			NCInt tr2 = v2.trans(sol);
+			NCBool ret(*sol);
+
+			// (ret <=> (tr1 == tr2))
+			std::vector<int> prem; prem.push_back(-ret.vId);
+			sol->IntEqual(tr1, tr2, prem);
+
+			prem[0] = -prem[0];
+			sol->IntNotEqual(tr1, tr2, prem);
 		}
 	};
 

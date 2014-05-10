@@ -14,8 +14,8 @@ void expr_csp()
 	NCInt z(sol, 0, 5);
 	NCInt w(sol, 0, 5);
 
-	sol.satisfy(x == y + (w - 3));
-	sol.satisfy(x + y == z + w);
+	sol.satisfy(x + 2 == y + z);
+	sol.satisfy(x - y == z - w);
 
 	bool res = sol.solve();
 
