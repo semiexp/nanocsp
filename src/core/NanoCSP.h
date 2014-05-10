@@ -6,7 +6,6 @@
 
 namespace NanoCSP
 {
-	class NCExpr;
 	class NCSolver;
 
 	struct NCBool

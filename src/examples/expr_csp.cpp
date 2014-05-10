@@ -12,14 +12,15 @@ void expr_csp()
 	NCInt x(sol, 0, 5);
 	NCInt y(sol, 0, 5);
 	NCInt z(sol, 0, 5);
+	NCInt w(sol, 0, 5);
 
-	sol.satisfy(x + (y - 2) == z);
-	sol.satisfy(x == y + z);
+	sol.satisfy(x == y + (w - 3));
+	sol.satisfy(x + y == z + w);
 
 	bool res = sol.solve();
 
 	if(res) {
 		puts("There is a solution");
-		printf("x: %d, y: %d, z: %d\n", sol.GetIntValue(x), sol.GetIntValue(y), sol.GetIntValue(z));
+		printf("x: %d, y: %d, z: %d, w: %d\n", sol.GetIntValue(x), sol.GetIntValue(y), sol.GetIntValue(z), sol.GetIntValue(w));
 	} else puts("No solution");
 }
