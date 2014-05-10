@@ -1,4 +1,6 @@
 
+#pragma once
+
 #include <iostream>
 #include <vector>
 
@@ -38,6 +40,12 @@ namespace NanoCSP
 		inline NCInt operator-(const int d) { return NCInt(vTop, nMin - d, nMax - d); }
 	};
 
+	template <typename T1, typename T2, int Op>
+	struct NCIntOpExpr;
+
+	template <typename T1, typename T2, int Op>
+	struct NCBoolOpExpr;
+
 	class NCSolver
 	{
 		friend struct NCBool;
@@ -53,7 +61,7 @@ namespace NanoCSP
 	public:
 		NCSolver() { vTop = 1; }
 
-		void IntEqual(NCInt& opLeft, NCInt& opRight, std::vector<int>& prem);
+		void IntEqual(NCInt& opLeft, NCInt& opRight, std::vector<int>& prem = std::vector<int>());
 		void IntNotEqual(NCInt& opLeft, NCInt& opRight, std::vector<int>& prem = std::vector<int>());
 		void IntAllDifferent(std::vector<NCInt>& vals, std::vector<int>& prem = std::vector<int>());
 		void LessEqualThan(NCInt& opLeft, NCInt& opRight, std::vector<int>& prem = std::vector<int>());
@@ -66,67 +74,10 @@ namespace NanoCSP
 
 		bool solve();
 		int GetIntValue(NCInt& iv);
+
+		template <typename T>
+		void satisfy(T expr) { expr.apply(this); }
 	};
 
-	/* (* TODO: codes below are buggy; they shouldn't be used *) */
-
-	NCExpr operator+(NCExpr& left, NCExpr& right);
-	NCExpr operator-(NCExpr& left, NCExpr& right);
-	NCExpr operator==(NCExpr& left, NCExpr& right);
-	NCExpr operator!=(NCExpr& left, NCExpr& right);
-	NCExpr operator<(NCExpr& left, NCExpr& right);
-	NCExpr operator<=(NCExpr& left, NCExpr& right);
-	NCExpr operator>(NCExpr& left, NCExpr& right);
-	NCExpr operator>=(NCExpr& left, NCExpr& right);
-	NCExpr operator+(NCBool& left, NCExpr& right);
-
-	class NCExpr
-	{
-		friend NCExpr operator+(NCExpr& left, NCExpr& right);
-		friend NCExpr operator-(NCExpr& left, NCExpr& right);
-		friend NCExpr operator==(NCExpr& left, NCExpr& right);
-		friend NCExpr operator!=(NCExpr& left, NCExpr& right);
-		friend NCExpr operator<(NCExpr& left, NCExpr& right);
-		friend NCExpr operator<=(NCExpr& left, NCExpr& right);
-		friend NCExpr operator>(NCExpr& left, NCExpr& right);
-		friend NCExpr operator>=(NCExpr& left, NCExpr& right);
-		friend NCExpr operator+(NCBool& left, NCExpr& right);
-
-		enum {
-			NC_BOOLVAR,
-			NC_INTVAR,
-			NC_ADD,
-			NC_SUBSTRACT,
-			NC_EQUAL,
-			NC_NOT_EQUAL,
-			NC_LESS,
-			NC_LESSEQUAL,
-			NC_GREATER,
-			NC_GREATEREQUAL
-		};
-		union {
-			struct{ NCExpr *opLeft, *opRight; };
-			NCBool *boolTarget;
-			NCInt *intTarget;
-		};
-		int opKind;
-
-		NCExpr (int opKind, NCExpr *opLeft, NCExpr *opRight) : opKind(opKind), opLeft(opLeft), opRight(opRight) {}
-		NCExpr (int opKind) : opKind(opKind), opLeft(NULL), opRight(NULL) {}
-	public:
-		NCExpr (NCBool& v)
-		{
-			boolTarget = &v;
-			opKind = NC_BOOLVAR;
-		}
-
-		NCExpr (NCInt& v)
-		{
-			intTarget = &v;
-			opKind = NC_INTVAR;
-		}
-
-		void print(std::ostream &ofs);
-	};
 };
 

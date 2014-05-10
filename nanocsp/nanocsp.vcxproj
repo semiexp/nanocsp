@@ -97,8 +97,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\core\CSPSolver.cpp" />
-    <ClCompile Include="..\src\core\Expr.cpp" />
+    <ClCompile Include="..\src\core\Expr.hpp" />
     <ClCompile Include="..\src\core\Variables.cpp" />
+    <ClCompile Include="..\src\examples\expr_csp.cpp" />
     <ClCompile Include="..\src\examples\simple_csp.cpp" />
     <ClCompile Include="..\src\examples\sudoku.cpp" />
     <ClCompile Include="..\src\main.cpp" />
