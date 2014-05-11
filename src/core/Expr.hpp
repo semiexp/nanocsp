@@ -15,6 +15,12 @@ namespace NanoCSP
 		NC_INT_NOT_EQUAL,	// (int != int) : bool
 		NC_INT_LESS,		// (int < int) : bool
 		NC_INT_LESS_EQUAL,	// (int <= int) : bool
+
+		NC_BOOL_VARIABLE,	// representing an existing bool variable; NCBool -> NCBoolOpExpr
+		NC_BOOL_AND,		// (bool && bool) : bool
+		NC_BOOL_OR,			// (bool || bool) : bool
+		NC_BOOL_THEN,		// (bool -> bool) : bool
+		NC_BOOL_EQUIV,		// (bool <=> bool) : bool
 	};
 	
 	// expr representing an int value
@@ -176,8 +182,22 @@ namespace NanoCSP
 		NCInt trans(NCSolver *sol) { return v1; }
 	};
 
+	template <>
+	struct NCBoolOpExpr <NCBool, void, NC_BOOL_VARIABLE>
+	{
+		NCBool v1;
+
+		NCBoolOpExpr(NCBool v1) : v1 (v1) {}
+
+		void apply(NCSolver *sol); // (* TODO *)
+		NCBool trans(NCSolver *sol) { return v1; }
+	};
+
 	typedef NCIntOpExpr <NCInt, void, NC_INT_VARIABLE> NCIntVarExpr;
 	static NCIntVarExpr ExprOfInt (NCInt v) { return NCIntVarExpr(v); }
+
+	typedef NCBoolOpExpr <NCBool, void, NC_BOOL_VARIABLE> NCBoolVarExpr;
+	static NCBoolVarExpr ExprOfBool (NCBool v) { return NCBoolVarExpr(v); }
 
 	// (x : IntExpr + y : IntExpr) == z : IntExpr of IntVariable
 	template <typename Ta, typename Tb, int Op1, typename Tc, typename Td, int Op2>
@@ -379,5 +399,29 @@ namespace NanoCSP
 
 	defIntBoolOperatorFlip (NC_INT_LESS, >);
 	defIntBoolOperatorFlip (NC_INT_LESS_EQUAL, >=);
+
+#define defBoolBoolOperator(ID, OP) \
+	template <typename Ta, typename Tb, int Op1, typename Tc, typename Td, int Op2> \
+	static NCBoolOpExpr< NCBoolOpExpr<Ta, Tb, Op1>, NCBoolOpExpr<Tc, Td, Op2>, ID> operator OP (const NCBoolOpExpr<Ta, Tb, Op1> v1, const NCBoolOpExpr<Tc, Td, Op2> v2) { \
+		return NCBoolOpExpr< NCBoolOpExpr<Ta, Tb, Op1>, NCBoolOpExpr<Tc, Td, Op2>, ID> (v1, v2); \
+	} \
+	template <typename Tc, typename Td, int Op2> \
+	static NCBoolOpExpr< NCBoolVarExpr, NCBoolOpExpr<Tc, Td, Op2>, ID> operator OP (const NCBool v1, const NCBoolOpExpr<Tc, Td, Op2> v2) { \
+		return NCBoolOpExpr< NCBoolVarExpr, NCBoolOpExpr<Tc, Td, Op2>, ID> (ExprOfBool(v1), v2); \
+	} \
+	\
+	template <typename Ta, typename Tb, int Op1> \
+	static NCBoolOpExpr< NCIntOpExpr<Ta, Tb, Op1>, NCBoolVarExpr, ID> operator OP (const NCBoolOpExpr<Ta, Tb, Op1> v1, const NCBool v2) { \
+		return NCBoolOpExpr< NCIntOpExpr<Ta, Tb, Op1>, NCBoolVarExpr, ID> (v1, ExprOfBool(v2)); \
+	} \
+	\
+	static NCBoolOpExpr< NCBoolVarExpr, NCBoolVarExpr, ID> operator OP (const NCBool v1, const NCBool v2) { \
+		return NCBoolOpExpr< NCBoolVarExpr, NCBoolVarExpr, ID> (ExprOfBool(v1), ExprOfBool(v2)); \
+	} \
+
+	defBoolBoolOperator (NC_BOOL_AND, &&);
+	defBoolBoolOperator (NC_BOOL_OR, ||);
+	defBoolBoolOperator (NC_BOOL_EQUIV, ==);
+	defBoolBoolOperator (NC_BOOL_THEN, >>=);
 };
 
