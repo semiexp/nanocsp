@@ -61,6 +61,9 @@ namespace NanoCSP
 	public:
 		NCSolver() { vTop = 1; }
 
+		void AddCond(int x, int y) { cond.push_back(x); cond.push_back(y); cond.push_back(0); }
+		void AddCond(int x, int y, int z) { cond.push_back(x); cond.push_back(y); cond.push_back(z); cond.push_back(0); }
+
 		void IntEqual(NCInt& opLeft, NCInt& opRight, std::vector<int>& prem = std::vector<int>());
 		void IntNotEqual(NCInt& opLeft, NCInt& opRight, std::vector<int>& prem = std::vector<int>());
 		void IntAllDifferent(std::vector<NCInt>& vals, std::vector<int>& prem = std::vector<int>());

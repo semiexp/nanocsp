@@ -35,6 +35,40 @@ namespace NanoCSP
 		NCInt trans(NCSolver *sol);
 	};
 
+	template <>
+	struct NCIntOpExpr <NCInt, void, NC_INT_VARIABLE>
+	{
+		NCInt v1;
+
+		NCIntOpExpr(NCInt v1) : v1 (v1) {}
+
+		void apply(NCSolver *sol);
+		NCInt trans(NCSolver *sol) { return v1; }
+	};
+
+	// expr representing a bool value
+	template <typename T1, typename T2, int Op>
+	struct NCBoolOpExpr
+	{
+		T1 v1; T2 v2;
+
+		NCBoolOpExpr(T1 v1, T2 v2) : v1 (v1), v2 (v2) {} 
+
+		void apply(NCSolver *sol);
+		NCBool trans(NCSolver *sol);
+	};
+
+	template <>
+	struct NCBoolOpExpr <NCBool, void, NC_BOOL_VARIABLE>
+	{
+		NCBool v1;
+
+		NCBoolOpExpr(NCBool v1) : v1 (v1) {}
+
+		void apply(NCSolver *sol); // (* TODO *)
+		NCBool trans(NCSolver *sol) { return v1; }
+	};
+
 	template <typename T1, typename T2>
 	struct NCIntOpExpr <T1, T2, NC_INT_ADD>
 	{
@@ -79,18 +113,6 @@ namespace NanoCSP
 		};
 	};
 
-	// expr representing a bool value
-	template <typename T1, typename T2, int Op>
-	struct NCBoolOpExpr
-	{
-		T1 v1; T2 v2;
-
-		NCBoolOpExpr(T1 v1, T2 v2) : v1 (v1), v2 (v2) {} 
-
-		void apply(NCSolver *sol);
-		NCBool trans(NCSolver *sol);
-	};
-
 	template <typename T1, typename T2>
 	struct NCBoolOpExpr <T1, T2, NC_INT_EQUAL>
 	{
@@ -108,7 +130,24 @@ namespace NanoCSP
 			sol->IntEqual(tri1, tri2);
 		}
 
-		NCBool trans(NCSolver *sol);
+		NCBool trans(NCSolver *sol)
+		{
+			// (tri1 == tri2) <=> ret
+			NCInt tri1, tri2;
+			NCBool ret(*sol);
+
+			tri1 = v1.trans(sol);
+			tri2 = v2.trans(sol);
+			std::vector<int> prem;
+
+			prem.push_back(-ret.vId);
+			sol->IntEqual(tri1, tri2, prem); // ret => (tri1 == tri2)
+
+			prem[0] = -prem[0];
+			sol->IntNotEqual(tri1, tri2, prem); // !ret => (tri1 != tri2)
+
+			return ret;
+		}
 	};
 
 	template <typename T1, typename T2>
@@ -128,7 +167,24 @@ namespace NanoCSP
 			sol->IntNotEqual(tri1, tri2);
 		}
 
-		NCBool trans(NCSolver *sol);
+		NCBool trans(NCSolver *sol)
+		{
+			// (tri1 != tri2) <=> ret
+			NCInt tri1, tri2;
+			NCBool ret(*sol);
+
+			tri1 = v1.trans(sol);
+			tri2 = v2.trans(sol);
+			std::vector<int> prem;
+
+			prem.push_back(-ret.vId);
+			sol->IntNotEqual(tri1, tri2, prem); // ret => (tri1 != tri2)
+
+			prem[0] = -prem[0];
+			sol->IntEqual(tri1, tri2, prem); // !ret => (tri1 == tri2)
+
+			return ret;
+		}
 	};
 
 	template <typename T1, typename T2>
@@ -148,7 +204,24 @@ namespace NanoCSP
 			sol->LessThan(tri1, tri2);
 		}
 
-		NCBool trans(NCSolver *sol);
+		NCBool trans(NCSolver *sol)
+		{
+			// (tri1 < tri2) <=> ret
+			NCInt tri1, tri2;
+			NCBool ret(*sol);
+
+			tri1 = v1.trans(sol);
+			tri2 = v2.trans(sol);
+			std::vector<int> prem;
+
+			prem.push_back(-ret.vId);
+			sol->LessThan(tri1, tri2, prem); // ret => (tri1 < tri2)
+
+			prem[0] = -prem[0];
+			sol->GtrEqualThan(tri1, tri2, prem); // ret => (tri1 >= tri2)
+
+			return ret;
+		}
 	};
 
 	template <typename T1, typename T2>
@@ -168,29 +241,160 @@ namespace NanoCSP
 			sol->LessEqualThan(tri1, tri2);
 		}
 
-		NCBool trans(NCSolver *sol);
+		NCBool trans(NCSolver *sol)
+		{
+			// (tri1 <= tri2) <=> ret
+			NCInt tri1, tri2;
+			NCBool ret(*sol);
+
+			tri1 = v1.trans(sol);
+			tri2 = v2.trans(sol);
+			std::vector<int> prem;
+
+			prem.push_back(-ret.vId);
+			sol->LessEqualThan(tri1, tri2, prem); // ret => (tri1 <= tri2)
+
+			prem[0] = -prem[0];
+			sol->GtrThan(tri1, tri2, prem); // ret => (tri1 > tri2)
+
+			return ret;
+		}
 	};
 
-	template <>
-	struct NCIntOpExpr <NCInt, void, NC_INT_VARIABLE>
+	template <typename T1, typename T2>
+	struct NCBoolOpExpr <T1, T2, NC_BOOL_AND>
 	{
-		NCInt v1;
+		T1 v1; T2 v2;
 
-		NCIntOpExpr(NCInt v1) : v1 (v1) {}
+		NCBoolOpExpr(T1 v1, T2 v2) : v1 (v1), v2 (v2) {} 
 
-		void apply(NCSolver *sol);
-		NCInt trans(NCSolver *sol) { return v1; }
+		void apply(NCSolver *sol)
+		{
+			v1.apply(sol);
+			v2.apply(sol);
+		}
+
+		NCBool trans(NCSolver *sol)
+		{
+			// (trb1 && trb2) == ret
+			NCBool trb1, trb2;
+			NCBool ret(*sol);
+
+			trb1 = v1.trans(sol);
+			trb2 = v2.trans(sol);
+			std::vector<int> prem;
+
+			sol->AddCond(-ret.vId, trb1.vId); // ret => trb1
+			sol->AddCond(-ret.vId, trb2.vId); // ret => trb2
+
+			sol->AddCond(-trb1.vId, -trb2.vId, ret.vId); // (trb1 && trb2) => ret
+
+			return ret;
+		}
 	};
 
-	template <>
-	struct NCBoolOpExpr <NCBool, void, NC_BOOL_VARIABLE>
+	template <typename T1, typename T2>
+	struct NCBoolOpExpr <T1, T2, NC_BOOL_OR>
 	{
-		NCBool v1;
+		T1 v1; T2 v2;
 
-		NCBoolOpExpr(NCBool v1) : v1 (v1) {}
+		NCBoolOpExpr(T1 v1, T2 v2) : v1 (v1), v2 (v2) {} 
 
-		void apply(NCSolver *sol); // (* TODO *)
-		NCBool trans(NCSolver *sol) { return v1; }
+		void apply(NCSolver *sol)
+		{
+			NCBool trb1 = v1.trans(sol);
+			NCBool trb2 = v2.trans(sol);
+
+			sol->AddCond(trb1.vId, trb2.vId);
+		}
+
+		NCBool trans(NCSolver *sol)
+		{
+			// (trb1 || trb2) == ret
+			NCBool trb1, trb2;
+			NCBool ret(*sol);
+
+			trb1 = v1.trans(sol);
+			trb2 = v2.trans(sol);
+			std::vector<int> prem;
+
+			sol->AddCond(-ret.vId, trb1.vId, trb2.vId); // ret => (trb1 || trb2)
+
+			sol->AddCond(-trb1.vId, ret.vId); // trb1 => ret
+			sol->AddCond(-trb2.vId, ret.vId); // trb2 => ret
+
+			return ret;
+		}
+	};
+
+	template <typename T1, typename T2>
+	struct NCBoolOpExpr <T1, T2, NC_BOOL_EQUIV>
+	{
+		T1 v1; T2 v2;
+
+		NCBoolOpExpr(T1 v1, T2 v2) : v1 (v1), v2 (v2) {} 
+
+		void apply(NCSolver *sol)
+		{
+			NCBool trb1 = v1.trans(sol);
+			NCBool trb2 = v2.trans(sol);
+
+			sol->AddCond(-trb1.vId, trb2.vId);
+			sol->AddCond(trb1.vId, -trb2.vId);
+		}
+
+		NCBool trans(NCSolver *sol)
+		{
+			// (trb1 <=> trb2) == ret
+			NCBool trb1, trb2;
+			NCBool ret(*sol);
+
+			trb1 = v1.trans(sol);
+			trb2 = v2.trans(sol);
+			std::vector<int> prem;
+
+			sol->AddCond(-ret.vId, -trb1.vId, trb2.vId);
+			sol->AddCond(-ret.vId, trb1.vId, -trb2.vId); // ret => (trb1 <=> trb2)
+
+			sol->AddCond(trb1.vId, trb2.vId, ret.vId);
+			sol->AddCond(-trb1.vId, -trb2.vId, ret.vId); // (trb1 <=> trb2) => ret
+
+			return ret;
+		}
+	};
+
+	template <typename T1, typename T2>
+	struct NCBoolOpExpr <T1, T2, NC_BOOL_THEN>
+	{
+		T1 v1; T2 v2;
+
+		NCBoolOpExpr(T1 v1, T2 v2) : v1 (v1), v2 (v2) {} 
+
+		void apply(NCSolver *sol)
+		{
+			NCBool trb1 = v1.trans(sol);
+			NCBool trb2 = v2.trans(sol);
+
+			sol->AddCond(-trb1.vId, trb2.vId);
+		}
+
+		NCBool trans(NCSolver *sol)
+		{
+			// (trb1 <=> trb2) == ret
+			NCBool trb1, trb2;
+			NCBool ret(*sol);
+
+			trb1 = v1.trans(sol);
+			trb2 = v2.trans(sol);
+			std::vector<int> prem;
+
+			sol->AddCond(-ret.vId, -trb1.vId, trb2.vId); // ret => (trb1 => trb2)
+
+			sol->AddCond(trb1.vId, ret.vId);
+			sol->AddCond(-trb2.vId, ret.vId); // (trb1 => trb2) => ret
+
+			return ret;
+		}
 	};
 
 	typedef NCIntOpExpr <NCInt, void, NC_INT_VARIABLE> NCIntVarExpr;
@@ -229,6 +433,8 @@ namespace NanoCSP
 
 			prem[0] = -prem[0];
 			sol->IntNotEqual(tr1, tr2, prem);
+
+			return ret;
 		}
 	};
 
@@ -262,6 +468,8 @@ namespace NanoCSP
 
 			prem[0] = -prem[0];
 			sol->IntNotEqual(tr1, tr2, prem);
+
+			return ret;
 		}
 	};
 
@@ -295,6 +503,8 @@ namespace NanoCSP
 
 			prem[0] = -prem[0];
 			sol->IntNotEqual(tr1, tr2, prem);
+
+			return ret;
 		}
 	};
 
@@ -328,6 +538,8 @@ namespace NanoCSP
 
 			prem[0] = -prem[0];
 			sol->IntNotEqual(tr1, tr2, prem);
+
+			return ret;
 		}
 	};
 
