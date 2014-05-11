@@ -15,8 +15,6 @@ namespace NanoCSP
 		NC_INT_NOT_EQUAL,	// (int != int) : bool
 		NC_INT_LESS,		// (int < int) : bool
 		NC_INT_LESS_EQUAL,	// (int <= int) : bool
-		// NC_INT_GTR,			// (int > int) : bool (not necessary)
-		// NC_INT_GTR_EQUAL,	// (int >= int) : bool (not necessary)
 	};
 	
 	// expr representing an int value
@@ -28,34 +26,50 @@ namespace NanoCSP
 		NCIntOpExpr(T1 v1, T2 v2) : v1 (v1), v2 (v2) {} 
 
 		void apply(NCSolver *sol);
+		NCInt trans(NCSolver *sol);
+	};
+
+	template <typename T1, typename T2>
+	struct NCIntOpExpr <T1, T2, NC_INT_ADD>
+	{
+		T1 v1; T2 v2;
+
+		NCIntOpExpr(T1 v1, T2 v2) : v1 (v1), v2 (v2) {} 
+
+		void apply(NCSolver *sol);
 		NCInt trans(NCSolver *sol)
 		{
 			NCInt tr1, tr2, ret;
-			switch(Op)
-			{
-			case NC_INT_ADD:
-				tr1 = v1.trans(sol);
-				tr2 = v2.trans(sol);
 
-				ret = NCInt(*sol, tr1.nMin + tr2.nMin, tr1.nMax + tr2.nMax);
-				sol->AddEqual(tr1, tr2, ret);
+			tr1 = v1.trans(sol);
+			tr2 = v2.trans(sol);
 
-				return ret;
+			ret = NCInt(*sol, tr1.nMin + tr2.nMin, tr1.nMax + tr2.nMax);
+			sol->AddEqual(tr1, tr2, ret);
 
-			case NC_INT_SUBTRACT:
-				tr1 = v1.trans(sol);
-				tr2 = v2.trans(sol);
+			return ret;
+		};
+	};
 
-				ret = NCInt(*sol, tr1.nMin - tr2.nMax, tr1.nMax - tr2.nMin);
-				sol->AddEqual(ret, tr2, tr1);
+	template <typename T1, typename T2>
+	struct NCIntOpExpr <T1, T2, NC_INT_SUBTRACT>
+	{
+		T1 v1; T2 v2;
 
-				return ret;
+		NCIntOpExpr(T1 v1, T2 v2) : v1 (v1), v2 (v2) {} 
 
-			case NC_INT_VARIABLE:
-				break;
-			}
+		void apply(NCSolver *sol);
+		NCInt trans(NCSolver *sol)
+		{
+			NCInt tr1, tr2, ret;
 
-			return NCInt();
+			tr1 = v1.trans(sol);
+			tr2 = v2.trans(sol);
+
+			ret = NCInt(*sol, tr1.nMin - tr2.nMax, tr1.nMax - tr2.nMin);
+			sol->AddEqual(ret, tr2, tr1);
+
+			return ret;
 		};
 	};
 
@@ -67,43 +81,85 @@ namespace NanoCSP
 
 		NCBoolOpExpr(T1 v1, T2 v2) : v1 (v1), v2 (v2) {} 
 
+		void apply(NCSolver *sol);
+		NCBool trans(NCSolver *sol);
+	};
+
+	template <typename T1, typename T2>
+	struct NCBoolOpExpr <T1, T2, NC_INT_EQUAL>
+	{
+		T1 v1; T2 v2;
+
+		NCBoolOpExpr(T1 v1, T2 v2) : v1 (v1), v2 (v2) {} 
+
 		void apply(NCSolver *sol)
 		{
-			union {
-				struct { NCInt tri1, tri2; };
-				struct { NCBool trb1, trb2; };
-			};
+			NCInt tri1, tri2;
 
-			switch(Op)
-			{
-			case NC_INT_EQUAL:
-				tri1 = v1.trans(sol);
-				tri2 = v2.trans(sol);
+			tri1 = v1.trans(sol);
+			tri2 = v2.trans(sol);
 
-				sol->IntEqual(tri1, tri2);
-				break;
+			sol->IntEqual(tri1, tri2);
+		}
 
-			case NC_INT_NOT_EQUAL:
-				tri1 = v1.trans(sol);
-				tri2 = v2.trans(sol);
+		NCBool trans(NCSolver *sol);
+	};
 
-				sol->IntNotEqual(tri1, tri2);
-				break;
+	template <typename T1, typename T2>
+	struct NCBoolOpExpr <T1, T2, NC_INT_NOT_EQUAL>
+	{
+		T1 v1; T2 v2;
 
-			case NC_INT_LESS:
-				tri1 = v1.trans(sol);
-				tri2 = v2.trans(sol);
+		NCBoolOpExpr(T1 v1, T2 v2) : v1 (v1), v2 (v2) {} 
 
-				sol->LessThan(tri1, tri2);
-				break;
+		void apply(NCSolver *sol)
+		{
+			NCInt tri1, tri2;
 
-			case NC_INT_LESS_EQUAL:
-				tri1 = v1.trans(sol);
-				tri2 = v2.trans(sol);
+			tri1 = v1.trans(sol);
+			tri2 = v2.trans(sol);
 
-				sol->LessEqualThan(tri1, tri2);
-				break;
-			}
+			sol->IntNotEqual(tri1, tri2);
+		}
+
+		NCBool trans(NCSolver *sol);
+	};
+
+	template <typename T1, typename T2>
+	struct NCBoolOpExpr <T1, T2, NC_INT_LESS>
+	{
+		T1 v1; T2 v2;
+
+		NCBoolOpExpr(T1 v1, T2 v2) : v1 (v1), v2 (v2) {} 
+
+		void apply(NCSolver *sol)
+		{
+			NCInt tri1, tri2;
+
+			tri1 = v1.trans(sol);
+			tri2 = v2.trans(sol);
+
+			sol->LessThan(tri1, tri2);
+		}
+
+		NCBool trans(NCSolver *sol);
+	};
+
+	template <typename T1, typename T2>
+	struct NCBoolOpExpr <T1, T2, NC_INT_LESS_EQUAL>
+	{
+		T1 v1; T2 v2;
+
+		NCBoolOpExpr(T1 v1, T2 v2) : v1 (v1), v2 (v2) {} 
+
+		void apply(NCSolver *sol)
+		{
+			NCInt tri1, tri2;
+
+			tri1 = v1.trans(sol);
+			tri2 = v2.trans(sol);
+
+			sol->LessEqualThan(tri1, tri2);
 		}
 
 		NCBool trans(NCSolver *sol);
@@ -122,52 +178,6 @@ namespace NanoCSP
 
 	typedef NCIntOpExpr <NCInt, void, NC_INT_VARIABLE> NCIntVarExpr;
 	static NCIntVarExpr ExprOfInt (NCInt v) { return NCIntVarExpr(v); }
-
-	// x + y
-	/*
-	template <typename Ta, typename Tb, int Op1, typename Tc, typename Td, int Op2>
-	struct NCIntOpExpr <NCIntOpExpr<Ta, Tb, Op1>, NCIntOpExpr<Tc, Td, Op2>, NC_INT_ADD>
-	{
-		NCIntOpExpr<Ta, Tb, Op1> v1; NCIntOpExpr<Tc, Td, Op2> v2;
-
-		NCIntOpExpr(NCIntOpExpr<Ta, Tb, Op1> v1, NCIntOpExpr<Tc, Td, Op2> v2) : v1 (v1), v2 (v2) {}
-
-		void apply(); // This expr is not applicable
-		NCInt trans(NCSolver *sol)
-		{
-			NCInt tr1 = v1.trans(sol);
-			NCInt tr2 = v2.trans(sol);
-
-			NCInt ret(*sol, tr1.nMin + tr2.nMin, tr1.nMax + tr2.nMax);
-
-			sol->AddEqual(tr1, tr2, ret);
-
-			return ret;
-		}
-	};
-
-	// x - y
-	template <typename Ta, typename Tb, int Op1, typename Tc, typename Td, int Op2>
-	struct NCIntOpExpr <NCIntOpExpr<Ta, Tb, Op1>, NCIntOpExpr<Tc, Td, Op2>, NC_INT_SUBTRACT>
-	{
-		NCIntOpExpr<Ta, Tb, Op1> v1; NCIntOpExpr<Tc, Td, Op2> v2;
-
-		NCIntOpExpr(NCIntOpExpr<Ta, Tb, Op1> v1, NCIntOpExpr<Tc, Td, Op2> v2) : v1 (v1), v2 (v2) {}
-
-		void apply(); // This expr is not applicable
-		NCInt trans(NCSolver *sol)
-		{
-			NCInt tr1 = v1.trans(sol);
-			NCInt tr2 = v2.trans(sol);
-
-			NCInt ret(*sol, tr1.nMin - tr2.nMax, tr1.nMax - tr2.nMin);
-
-			sol->AddEqual(ret, tr2, tr1);
-
-			return ret;
-		}
-	};
-	*/
 
 	// (x : IntExpr + y : IntExpr) == z : IntExpr of IntVariable
 	template <typename Ta, typename Tb, int Op1, typename Tc, typename Td, int Op2>

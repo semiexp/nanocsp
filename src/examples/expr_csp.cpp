@@ -17,6 +17,8 @@ void expr_csp()
 	sol.satisfy(x + 2 == y + z);
 	sol.satisfy(x - y == z - w);
 	sol.satisfy(z < w);
+	sol.satisfy(x <= w);
+	sol.satisfy(x >= w);
 
 	bool res = sol.solve();
 
