@@ -18,6 +18,7 @@ void expr_csp()
 	sol.satisfy(x - y == z - w);
 	sol.satisfy((x != 3) >>= (y == 4));
 	sol.satisfy((x == 3) >>= (y == 3));
+	sol.satisfy((y == 5) || y == 4);
 
 	bool res = sol.solve();
 

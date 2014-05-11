@@ -122,5 +122,8 @@
     <ClCompile Include="..\src\examples\expr_csp.cpp">
       <Filter>ソース ファイル\example</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\examples\money.cpp">
+      <Filter>ソース ファイル\example</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
