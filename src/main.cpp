@@ -10,8 +10,8 @@ using namespace NanoCSP;
 
 int main(int argc, char** argv)
 {
-	send_more_money();
-	//expr_csp();
+	//send_more_money();
+	expr_csp();
 	//simple_csp();
 	//sudoku_test();
 

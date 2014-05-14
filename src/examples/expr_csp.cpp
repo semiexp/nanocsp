@@ -14,16 +14,16 @@ void expr_csp()
 	NCInt z(sol, 0, 5);
 	NCInt w(sol, 0, 5);
 
-	sol.satisfy(x + 2 == y + z);
-	sol.satisfy(x - y == z - w);
-	sol.satisfy((x != 3) >>= (y == 4));
-	sol.satisfy((x == 3) >>= (y == 3));
-	sol.satisfy((y == 5) || y == 4);
+	NCBool p(sol);
+
+	sol.satisfy(x == 3);
+	sol.satisfy(x == 3 >>= y == 1);
+	sol.satisfy(p >>= x == 2);
 
 	bool res = sol.solve();
 
 	if(res) {
 		puts("There is a solution");
-		printf("x: %d, y: %d, z: %d, w: %d\n", sol.GetIntValue(x), sol.GetIntValue(y), sol.GetIntValue(z), sol.GetIntValue(w));
+		printf("x: %d, y: %d, z: %d, w: %d, p: %d\n", sol.GetIntValue(x), sol.GetIntValue(y), sol.GetIntValue(z), sol.GetIntValue(w), (int) sol.GetBoolValue(p));
 	} else puts("No solution");
 }

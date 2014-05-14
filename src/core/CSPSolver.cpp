@@ -20,12 +20,10 @@ namespace NanoCSP
 
 	bool NCSolver::solve()
 	{
-		/*
 		for(int i=0;i<cond.size();i++) {
 			printf("%d ", cond[i]);
 			if(cond[i] == 0) puts("");
 		}
-		*/
 
 		sol = SAT(cond);
 
@@ -42,8 +40,8 @@ namespace NanoCSP
 	
 	bool NCSolver::GetBoolValue(NCBool& bv)
 	{
-		if(bv.vId < 0) return !sol[bv.vId];
-		return sol[bv.vId];
+		if(bv.vId < 0) return !sol[bv.vId - 1];
+		return sol[bv.vId - 1];
 	}
 
 	void NCSolver::IntEqual(NCInt& opLeft, NCInt& opRight, std::vector<int>& prem)
