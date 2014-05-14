@@ -15,6 +15,8 @@ namespace NanoCSP
 		NCBool() : vId(-1) {}
 		NCBool(int vId) : vId(vId) {}
 		NCBool(NCSolver& sol);
+
+		inline NCBool operator!() { return NCBool(-vId); }
 	};
 
 	struct NCInt
