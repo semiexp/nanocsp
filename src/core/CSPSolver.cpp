@@ -20,10 +20,12 @@ namespace NanoCSP
 
 	bool NCSolver::solve()
 	{
+		/*
 		for(int i=0;i<cond.size();i++) {
 			printf("%d ", cond[i]);
 			if(cond[i] == 0) puts("");
 		}
+		*/
 
 		sol = SAT(cond);
 
