@@ -23,6 +23,32 @@ namespace NanoCSP
 		NC_BOOL_EQUIV,		// (bool <=> bool) : bool
 	};
 	
+	struct NCIntRange
+	{
+		int nMin, nMax;
+
+		NCIntRange() {}
+		NCIntRange(int v) : nMin(v), nMax(v) {}
+		NCIntRange(int vMin, int vMax) : nMin(vMin), nMax(vMax) {}
+	};
+
+	inline NCIntRange operator&&(const NCIntRange& left, const NCIntRange& right)
+	{
+		NCIntRange tmp(std::max(left.nMin, right.nMin), std::min(left.nMax, right.nMax));
+
+		return NCIntRange(tmp.nMin, std::max(tmp.nMin, tmp.nMax));
+	}
+
+	inline NCIntRange operator+(const NCIntRange& left, const NCIntRange& right)
+	{
+		return NCIntRange(left.nMin + right.nMin, left.nMax + right.nMax);
+	}
+
+	inline NCIntRange operator-(const NCIntRange& left, const NCIntRange& right)
+	{
+		return NCIntRange(left.nMin - right.nMax, left.nMax - right.nMin);
+	}
+
 	// expr representing an int value
 	template <typename T1, typename T2, int Op>
 	struct NCIntOpExpr
@@ -44,6 +70,9 @@ namespace NanoCSP
 
 		void apply(NCSolver *sol);
 		NCInt trans(NCSolver *sol) { return v1; }
+		NCInt trans(NCSolver *sol, NCIntRange range) { return v1; }
+
+		NCIntRange range() { return NCIntRange(v1.nMin, v1.nMax); }
 	};
 
 	// expr representing a bool value
@@ -89,6 +118,24 @@ namespace NanoCSP
 
 			return ret;
 		};
+
+		NCInt trans(NCSolver *sol, NCIntRange range)
+		{
+			NCInt tr1, tr2, ret;
+
+			tr1 = v1.trans(sol);
+			tr2 = v2.trans(sol);
+
+			ret = NCInt(*sol, range);
+			sol->AddEqual(tr1, tr2, ret);
+
+			return ret;
+		};
+
+		NCIntRange range()
+		{
+			return v1.range() + v2.range();
+		}
 	};
 
 	template <typename T1, typename T2>
@@ -111,6 +158,24 @@ namespace NanoCSP
 
 			return ret;
 		};
+
+		NCInt trans(NCSolver *sol, NCIntRange range)
+		{
+			NCInt tr1, tr2, ret;
+
+			tr1 = v1.trans(sol);
+			tr2 = v2.trans(sol);
+
+			ret = NCInt(*sol, range);
+			sol->AddEqual(ret, tr2, tr1);
+
+			return ret;
+		};
+
+		NCIntRange range()
+		{
+			return v1.range() - v2.range();
+		}
 	};
 
 	template <typename T1, typename T2>
@@ -136,8 +201,10 @@ namespace NanoCSP
 			NCInt tri1, tri2;
 			NCBool ret(*sol);
 
-			tri1 = v1.trans(sol);
-			tri2 = v2.trans(sol);
+			NCIntRange range = v1.range() && v2.range();
+
+			tri1 = v1.trans(sol, range);
+			tri2 = v2.trans(sol, range);
 			std::vector<int> prem;
 
 			prem.push_back(-ret.vId);
