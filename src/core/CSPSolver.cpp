@@ -39,6 +39,12 @@ namespace NanoCSP
 		}
 		return iv.nMax;
 	}
+	
+	bool NCSolver::GetBoolValue(NCBool& bv)
+	{
+		if(bv.vId < 0) return !sol[bv.vId];
+		return sol[bv.vId];
+	}
 
 	void NCSolver::IntEqual(NCInt& opLeft, NCInt& opRight, std::vector<int>& prem)
 	{

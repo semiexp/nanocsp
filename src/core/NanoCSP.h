@@ -79,6 +79,7 @@ namespace NanoCSP
 
 		bool solve();
 		int GetIntValue(NCInt& iv);
+		bool GetBoolValue(NCBool& bv);
 
 		template <typename T>
 		void satisfy(T expr) { expr.apply(this); }
