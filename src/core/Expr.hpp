@@ -624,7 +624,7 @@ namespace NanoCSP
 	\
 	template <typename Ta, typename Tb, int Op1> \
 	static NCBoolOpExpr< NCIntOpExpr<Ta, Tb, Op1>, NCBoolVarExpr, ID> operator OP (const NCBoolOpExpr<Ta, Tb, Op1> v1, const NCBool v2) { \
-		return NCBoolOpExpr< NCIntOpExpr<Ta, Tb, Op1>, NCBoolVarExpr, ID> (v1, ExprOfBool(v2)); \
+		return NCBoolOpExpr< NCBoolOpExpr<Ta, Tb, Op1>, NCBoolVarExpr, ID> (v1, ExprOfBool(v2)); \
 	} \
 	\
 	static NCBoolOpExpr< NCBoolVarExpr, NCBoolVarExpr, ID> operator OP (const NCBool v1, const NCBool v2) { \
